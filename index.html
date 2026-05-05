@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>المزرعة الذكية</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0b1d13;
+    color: white;
+}
+.container {
+    padding: 20px;
+}
+.title {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+.card {
+    background: #132a1d;
+    padding: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.card:hover {
+    transform: scale(1.05);
+}
+.green { color: #00ff88; }
+.red { color: #ff4d4d; }
+.yellow { color: #ffc107; }
+
+.button {
+    margin-top: 10px;
+    padding: 8px;
+    background: #00ff88;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="title">🌱 نظام المزرعة الذكية</div>
+
+<div class="grid">
+
+<div class="card" onclick="showDetails('الرطوبة جيدة وتحتاج متابعة كل 6 ساعات')">
+<h3>💧 الرطوبة</h3>
+<p class="green" id="humidity">75% - ممتاز</p>
+<button class="button" onclick="toggleHumidity(event)">تحديث</button>
+</div>
+
+<div class="card" onclick="showDetails('الإضاءة تعتمد على الليل والنهار')">
+<h3>💡 الإضاءة</h3>
+<p class="yellow" id="light">منخفضة</p>
+<button class="button" onclick="toggleLight(event)">تشغيل/إيقاف</button>
+</div>
+
+<div class="card" onclick="showDetails('لا يوجد تهديدات حالياً')">
+<h3>🚨 الأمان</h3>
+<p class="green">مستقر</p>
+</div>
+
+<div class="card" onclick="showDetails('عدد البيض يتم حسابه تلقائياً')">
+<h3>🥚 إنتاج البيض</h3>
+<p id="eggs">24 بيضة</p>
+<button class="button" onclick="addEgg(event)">إضافة</button>
+</div>
+
+<div class="card" onclick="showDetails('الروبوت مسؤول عن ترتيب المحاصيل')">
+<h3>🤖 الروبوت</h3>
+<p id="robot">يعمل</p>
+<button class="button" onclick="toggleRobot(event)">إيقاف</button>
+</div>
+
+<div class="card" onclick="showDetails('تم رصد حركة سابقاً')">
+<h3>📡 مستشعر الحركة</h3>
+<p class="red">تم رصد حركة!</p>
+</div>
+
+</div>
+</div>
+
+<script>
+function showDetails(msg) {
+    alert(msg);
+}
+
+function toggleLight(event) {
+    event.stopPropagation();
+    let el = document.getElementById("light");
+    if (el.innerText === "منخفضة") {
+        el.innerText = "مفعلة";
+        el.className = "green";
+    } else {
+        el.innerText = "منخفضة";
+        el.className = "yellow";
+    }
+}
+
+function toggleRobot(event) {
+    event.stopPropagation();
+    let el = document.getElementById("robot");
+    if (el.innerText === "يعمل") {
+        el.innerText = "متوقف";
+    } else {
+        el.innerText = "يعمل";
+    }
+}
+
+function addEgg(event) {
+    event.stopPropagation();
+    let el = document.getElementById("eggs");
+    let num = parseInt(el.innerText);
+    el.innerText = (num + 1) + " بيضة";
+}
+
+function toggleHumidity(event) {
+    event.stopPropagation();
+    let el = document.getElementById("humidity");
+    el.innerText = Math.floor(Math.random()*100) + "%";
+}
+</script>
+
+</body>
+</html>
