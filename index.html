@@ -8,31 +8,46 @@
 body {
     margin: 0;
     font-family: Arial;
-    background: #0b1d13;
+    background: linear-gradient(180deg, #081c15, #0b1d13);
     color: white;
 }
+
 .container {
     padding: 20px;
 }
+
+/* العنوان */
 .title {
-    font-size: 28px;
+    font-size: 32px;
     margin-bottom: 20px;
 }
+
+/* الشبكة */
 .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 15px;
 }
+
+/* الكروت */
 .card {
     background: #132a1d;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 16px;
     cursor: pointer;
     transition: 0.3s;
+    box-shadow: 0 0 10px rgba(0,255,100,0.1);
 }
+
 .card:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px) scale(1.02);
 }
+
+/* كرت كبير */
+.big {
+    grid-column: span 2;
+}
+
 .green { color: #00ff88; }
 .red { color: #ff4d4d; }
 .yellow { color: #ffc107; }
@@ -45,51 +60,77 @@ body {
     border-radius: 6px;
     cursor: pointer;
 }
+
+/* قسم الرسم البياني (وهمي) */
+.chart {
+    height: 120px;
+    background: linear-gradient(to right, #00ff88, transparent);
+    border-radius: 10px;
+    margin-top: 10px;
+}
 </style>
 </head>
 
 <body>
 
 <div class="container">
+
 <div class="title">🌱 نظام المزرعة الذكية</div>
 
 <div class="grid">
 
-<div class="card" onclick="showDetails('الرطوبة جيدة وتحتاج متابعة كل 6 ساعات')">
+<div class="card big">
+<h3>📊 حالة المزرعة اليوم</h3>
+<p class="green">جميع الأنظمة تعمل بكفاءة عالية</p>
+<div class="chart"></div>
+</div>
+
+<div class="card" onclick="showDetails('الرطوبة جيدة وتحتاج متابعة')">
 <h3>💧 الرطوبة</h3>
-<p class="green" id="humidity">75% - ممتاز</p>
+<p class="green" id="humidity">75%</p>
 <button class="button" onclick="toggleHumidity(event)">تحديث</button>
 </div>
 
-<div class="card" onclick="showDetails('الإضاءة تعتمد على الليل والنهار')">
-<h3>💡 الإضاءة</h3>
-<p class="yellow" id="light">منخفضة</p>
-<button class="button" onclick="toggleLight(event)">تشغيل/إيقاف</button>
+<div class="card">
+<h3>🌡️ الحرارة</h3>
+<p>28°C</p>
 </div>
 
-<div class="card" onclick="showDetails('لا يوجد تهديدات حالياً')">
+<div class="card" onclick="showDetails('الإضاءة ذكية وتعمل تلقائي')">
+<h3>💡 الإضاءة</h3>
+<p class="yellow" id="light">منخفضة</p>
+<button class="button" onclick="toggleLight(event)">تشغيل</button>
+</div>
+
+<div class="card">
 <h3>🚨 الأمان</h3>
 <p class="green">مستقر</p>
 </div>
 
-<div class="card" onclick="showDetails('عدد البيض يتم حسابه تلقائياً')">
+<div class="card">
 <h3>🥚 إنتاج البيض</h3>
-<p id="eggs">24 بيضة</p>
-<button class="button" onclick="addEgg(event)">إضافة</button>
+<p id="eggs">24</p>
+<button class="button" onclick="addEgg(event)">+</button>
 </div>
 
-<div class="card" onclick="showDetails('الروبوت مسؤول عن ترتيب المحاصيل')">
+<div class="card">
+<h3>🍎 إنتاج المحاصيل</h3>
+<p>15 كجم</p>
+</div>
+
+<div class="card">
 <h3>🤖 الروبوت</h3>
 <p id="robot">يعمل</p>
 <button class="button" onclick="toggleRobot(event)">إيقاف</button>
 </div>
 
-<div class="card" onclick="showDetails('تم رصد حركة سابقاً')">
-<h3>📡 مستشعر الحركة</h3>
-<p class="red">تم رصد حركة!</p>
+<div class="card">
+<h3>📡 الحركة</h3>
+<p class="red">تم رصد حركة</p>
 </div>
 
 </div>
+
 </div>
 
 <script>
@@ -112,18 +153,13 @@ function toggleLight(event) {
 function toggleRobot(event) {
     event.stopPropagation();
     let el = document.getElementById("robot");
-    if (el.innerText === "يعمل") {
-        el.innerText = "متوقف";
-    } else {
-        el.innerText = "يعمل";
-    }
+    el.innerText = el.innerText === "يعمل" ? "متوقف" : "يعمل";
 }
 
 function addEgg(event) {
     event.stopPropagation();
     let el = document.getElementById("eggs");
-    let num = parseInt(el.innerText);
-    el.innerText = (num + 1) + " بيضة";
+    el.innerText = parseInt(el.innerText) + 1;
 }
 
 function toggleHumidity(event) {
