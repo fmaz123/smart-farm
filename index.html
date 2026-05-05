@@ -1,172 +1,228 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>المزرعة الذكية</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المزرعة الذكية - Smart Farm OS</title>
+    
+    <style>
+        :root {
+            --primary-glow: #00ff88;
+            --glass-bg: rgba(19, 42, 29, 0.8);
+            --text-color: #ffffff;
+            --accent-yellow: #ffc107;
+            --accent-red: #ff4d4d;
+        }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: linear-gradient(180deg, #081c15, #0b1d13);
-    color: white;
-}
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at center, #0b2d1d 0%, #05120b 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-.container {
-    padding: 20px;
-}
+        .container {
+            padding: 40px;
+            width: 90%;
+            max-width: 1200px;
+        }
 
-/* العنوان */
-.title {
-    font-size: 32px;
-    margin-bottom: 20px;
-}
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--primary-glow);
+            padding-bottom: 20px;
+        }
 
-/* الشبكة */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-}
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-glow);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+        }
 
-/* الكروت */
-.card {
-    background: #132a1d;
-    padding: 20px;
-    border-radius: 16px;
-    cursor: pointer;
-    transition: 0.3s;
-    box-shadow: 0 0 10px rgba(0,255,100,0.1);
-}
+        /* شبكة الصناديق الكبيرة */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
 
-.card:hover {
-    transform: translateY(-5px) scale(1.02);
-}
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
 
-/* كرت كبير */
-.big {
-    grid-column: span 2;
-}
+        .card:hover {
+            transform: scale(1.03);
+            border-color: var(--primary-glow);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.2);
+        }
 
-.green { color: #00ff88; }
-.red { color: #ff4d4d; }
-.yellow { color: #ffc107; }
+        /* زر الفحص والذكاء الاصطناعي */
+        .btn {
+            background: transparent;
+            border: 2px solid var(--primary-glow);
+            color: var(--primary-glow);
+            padding: 12px 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.3s;
+            margin-top: 20px;
+            width: 100%;
+        }
 
-.button {
-    margin-top: 10px;
-    padding: 8px;
-    background: #00ff88;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
+        .btn:hover {
+            background: var(--primary-glow);
+            color: #05120b;
+        }
 
-/* قسم الرسم البياني (وهمي) */
-.chart {
-    height: 120px;
-    background: linear-gradient(to right, #00ff88, transparent);
-    border-radius: 10px;
-    margin-top: 10px;
-}
-</style>
+        .stat-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--primary-glow);
+            margin: 15px 0;
+        }
+
+        .label { font-size: 18px; color: #aaa; margin-bottom: 5px; display: block; }
+
+        /* الأنيميشن حق الفحص */
+        .scan-line {
+            height: 4px;
+            background: var(--primary-glow);
+            width: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            display: none;
+            animation: scanAnim 2.5s infinite linear;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        @keyframes scanAnim {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        #ai-result {
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 50px;
+            line-height: 1.6;
+        }
+
+        .pulse { animation: pulseAnim 2s infinite; }
+        @keyframes pulseAnim {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <div class="header">
+        <div class="title">🌱 نظام المزرعة الذكية - AI Control</div>
+        <div id="clock" style="font-family: monospace; font-size: 20px;">00:00:00</div>
+    </div>
 
-<div class="title">🌱 نظام المزرعة الذكية</div>
+    <div class="dashboard-grid">
+        
+        <div class="card" style="grid-column: span 2;">
+            <div class="scan-line" id="scanner"></div>
+            <span class="label">تحليل صحة المحاصيل بالذكاء الاصطناعي (AI Analysis)</span>
+            <div id="ai-result">اضغط على الزر أدناه لإرسال الطائرة المسيرة (Drone) وفحص أوراق النباتات..</div>
+            <button class="btn" onclick="runAIScan()">ابدأ الفحص الميداني الذكي</button>
+        </div>
 
-<div class="grid">
+        <div class="card">
+            <span class="label">كفاءة الطاقة الشمسية</span>
+            <div class="stat-value" style="color: var(--accent-yellow);">94%</div>
+            <p>توليد مستمر للألواح (نظام الاكتفاء الذاتي)</p>
+        </div>
 
-<div class="card big">
-<h3>📊 حالة المزرعة اليوم</h3>
-<p class="green">جميع الأنظمة تعمل بكفاءة عالية</p>
-<div class="chart"></div>
-</div>
+        <div class="card">
+            <span class="label">رطوبة التربة</span>
+            <div class="stat-value" id="hum-val">68%</div>
+            <button class="btn" onclick="updateVal('hum-val', '%')">تحديث القراءة</button>
+        </div>
 
-<div class="card" onclick="showDetails('الرطوبة جيدة وتحتاج متابعة')">
-<h3>💧 الرطوبة</h3>
-<p class="green" id="humidity">75%</p>
-<button class="button" onclick="toggleHumidity(event)">تحديث</button>
-</div>
+        <div class="card">
+            <span class="label">درجة الحرارة</span>
+            <div class="stat-value" id="temp-val">26°C</div>
+            <button class="btn" onclick="updateVal('temp-val', '°C')">مزامنة الحساسات</button>
+        </div>
 
-<div class="card">
-<h3>🌡️ الحرارة</h3>
-<p>28°C</p>
-</div>
+        <div class="card">
+            <span class="label">الإنتاجية اليومية</span>
+            <div style="display: flex; justify-content: space-around; align-items: center;">
+                <div>🥚 <span id="egg-count" class="stat-value" style="font-size: 35px;">32</span></div>
+                <div>🍎 <span class="stat-value" style="font-size: 35px; color: #ff4d4d;">18kg</span></div>
+            </div>
+            <button class="btn" onclick="addEgg()">تسجيل إنتاج جديد (+)</button>
+        </div>
 
-<div class="card" onclick="showDetails('الإضاءة ذكية وتعمل تلقائي')">
-<h3>💡 الإضاءة</h3>
-<p class="yellow" id="light">منخفضة</p>
-<button class="button" onclick="toggleLight(event)">تشغيل</button>
-</div>
-
-<div class="card">
-<h3>🚨 الأمان</h3>
-<p class="green">مستقر</p>
-</div>
-
-<div class="card">
-<h3>🥚 إنتاج البيض</h3>
-<p id="eggs">24</p>
-<button class="button" onclick="addEgg(event)">+</button>
-</div>
-
-<div class="card">
-<h3>🍎 إنتاج المحاصيل</h3>
-<p>15 كجم</p>
-</div>
-
-<div class="card">
-<h3>🤖 الروبوت</h3>
-<p id="robot">يعمل</p>
-<button class="button" onclick="toggleRobot(event)">إيقاف</button>
-</div>
-
-<div class="card">
-<h3>📡 الحركة</h3>
-<p class="red">تم رصد حركة</p>
-</div>
-
-</div>
-
+    </div>
 </div>
 
 <script>
-function showDetails(msg) {
-    alert(msg);
-}
+    // الساعة الحية
+    setInterval(() => {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString('ar-SA');
+    }, 1000);
 
-function toggleLight(event) {
-    event.stopPropagation();
-    let el = document.getElementById("light");
-    if (el.innerText === "منخفضة") {
-        el.innerText = "مفعلة";
-        el.className = "green";
-    } else {
-        el.innerText = "منخفضة";
-        el.className = "yellow";
+    // تحديث الأرقام عشوائياً
+    function updateVal(id, unit) {
+        let n = Math.floor(Math.random() * (30 - 18) + 18);
+        document.getElementById(id).innerText = n + unit;
     }
-}
 
-function toggleRobot(event) {
-    event.stopPropagation();
-    let el = document.getElementById("robot");
-    el.innerText = el.innerText === "يعمل" ? "متوقف" : "يعمل";
-}
+    function addEgg() {
+        const el = document.getElementById('egg-count');
+        el.innerText = parseInt(el.innerText) + 1;
+    }
 
-function addEgg(event) {
-    event.stopPropagation();
-    let el = document.getElementById("eggs");
-    el.innerText = parseInt(el.innerText) + 1;
-}
+    // محرك الذكاء الاصطناعي "الذكي"
+    function runAIScan() {
+        const scanner = document.getElementById('scanner');
+        const result = document.getElementById('ai-result');
+        
+        scanner.style.display = 'block';
+        result.innerText = 'جاري تحليل الأنسجة النباتية وقياس مستوى الكلوروفيل...';
+        result.style.color = 'white';
 
-function toggleHumidity(event) {
-    event.stopPropagation();
-    let el = document.getElementById("humidity");
-    el.innerText = Math.floor(Math.random()*100) + "%";
-}
+        // قائمة احتمالات ذكية
+        const outcomes = [
+            { text: "⚠️ تم رصد نقص طفيف في النيتروجين بقطاع (أ). ننصح بزيادة السماد العضوي.", color: "#ffc107" },
+            { text: "✅ الفحص مكتمل: المحصول في حالة صحية مثالية. معدل النمو ممتاز.", color: "#00ff88" },
+            { text: "🚨 تحذير: رطوبة التربة زائدة بشكل خطر! قد تظهر فطريات على الجذور، سيتم إيقاف الري آلياً.", color: "#ff4d4d" },
+            { text: "💡 ملاحظة: مستوى الضوء غير كافٍ في الزاوية الغربية، تم تفعيل الإضاءة البديلة.", color: "#00d4ff" }
+        ];
+
+        setTimeout(() => {
+            scanner.style.display = 'none';
+            const randomPick = outcomes[Math.floor(Math.random() * outcomes.length)];
+            result.innerText = randomPick.text;
+            result.style.color = randomPick.color;
+        }, 3500); // 3.5 ثانية وقت الفحص
+    }
 </script>
 
 </body>
